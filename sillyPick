@@ -1,0 +1,14 @@
+trigger sillyPick on Account (before insert, before update) {
+
+    for (Account myAccount : Trigger.new) {
+      
+      if (myAccount.sillyPick__c != null) {
+        Integer count = myAccount.sillyPick__c.countMatches(';') + 1'
+        myAccount.sillyPickCounter__c = count;
+        System.debug('Number of items found for ' + myAccount.Name + count);
+      } else {
+        myAccount.sillyPickCounter__c = 0;
+        System.debug('No items found for ' + myAccount.Name);
+      }
+    }
+}

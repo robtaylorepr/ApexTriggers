@@ -1,0 +1,42 @@
+// Homework # 2
+//  Upon opportunity creation, add the opportunity owner’s manager as an 
+//  opportunity team member with role ’Sales Manager”
+
+trigger OwnerManager on Case (before insert) {
+
+  for (Opportunity opp : Trigger.new) {
+    Opportunity oppWithManagerInfo = 
+      [SELECT Id
+              Owner.ManagerId
+       FROM   Opportunity
+       WHERE  Id = :opp.Id];
+
+    If (oppWithManagerInfo.Owner.ManagerId != null) {
+      OpportunityTeamMember otm = new OpportunityTeamMember();
+      otm.UserId                = oppWithManagerInfo.Owner.ManagerId;
+      otm.OpportunityId         = opp.Id;
+      otm.TeamMemberRole        = 'Sales Manager';
+    }
+
+    // Check if the owner is a manager
+    List<User> reportees =
+       [SELECT Id
+          FROM User
+         WHERE ManagerId = :opp.OwnerId];
+    
+    // Create the member for the reportees
+    if (!reportees.isEmpty()) {
+      OpportunityTeamMember reporteeMember = new OpportunityTeammember();
+      reporteeMember.UserId                = reportees.get(0).Id;
+      reporteeMember.OpportunityId         = opp.Id;
+      reporteeMember.TeamMemberRole        = 'Sales Rep';
+      otms.add(reporteeMember);
+    }
+
+    // Insert all members at once
+    if (!otms.isEmpty()) {
+      insert otms;
+    }
+  }
+}
+

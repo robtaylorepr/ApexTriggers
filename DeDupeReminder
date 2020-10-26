@@ -1,0 +1,11 @@
+trigger DeDupeReminder on Account (after insert) {
+    
+    for (Account acct : Trigger.new) {
+
+      Case c = new Case();
+      c.Subject    = 'DeDupe this account';
+      c.OwnerId    = '0056g000000Vv8IAAS';
+      c.AccountId  = acct.Id;
+      insert c;
+    }
+}

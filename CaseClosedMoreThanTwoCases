@@ -1,0 +1,16 @@
+trigger CaseClosed on Case (before insert) {
+
+	for (Case myCase : Trigger.new) {
+		if (myCase.ContactId != null) {
+			// Find all cases with this contact created today
+			List<Case> casesTodayFromContact = 
+                [SELECT		Id
+				         FROM		  Case
+				         WHERE		ContactId = :MyCase.ContactId
+				         AND		  CreatedDate = Today];
+			if (casesTodayFromContact.size() >= 2) {
+				myCase.Status = 'Closed';
+			}
+		}
+	}
+}

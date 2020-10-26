@@ -1,0 +1,20 @@
+trigger accountTasks on Account (after insert) {
+
+    for (Account myAccount : Trigger.new) {
+    
+      List<String> selectedItems = new List<String>();
+      selectedItems = MyAccount.sillyPick__c.split(';');
+
+      List<Task> tasksToCreate = new List<Task>();
+      for (String item : selectedItems) {
+        System.debug('Creating a new task for item: ' + item);
+        Task.myTask     = new Task();
+        myTask.Subject  = item;
+        myTask.WhatId   = MyAccount.Id;
+        tasksToCreate.add(myTask);
+      }
+      insert tasksToCreate;
+
+    }
+  }
+}

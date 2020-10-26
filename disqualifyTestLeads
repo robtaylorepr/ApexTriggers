@@ -1,0 +1,11 @@
+trigger disqualifyTestLeads on Lead (before insert) {
+
+    for (Lead myLead : Trigger.new) {
+      
+      // only work with leads that have a First OR Last name of test
+      if (myLead.FirtName.capitalize() == 'TEST' ||
+          myLead.LastName.capitalize() == 'TEST) {
+        myLead.Status = 'Disqualified';
+        }
+    }
+}

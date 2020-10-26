@@ -1,0 +1,30 @@
+trigger CaseClosedMoreThanTreeCasesOnOneAccount on Case (before insert) {
+
+	for (Case myCase : Trigger.new) {
+		if (myCase.ContactId != null) {
+			// Find all cases with this contact created today
+			List<Case> casesTodayFromContact = 
+                [SELECT		Id
+				         FROM		  Case
+				         WHERE		ContactId = :MyCase.ContactId;
+				         AND		  CreatedDate = Today];
+			if (casesTodayFromContact.size() >= 2) {
+				myCase.Status = 'Closed';
+			}
+		}
+
+    if (myCase.AccountId != null) {
+      // Find all cases with this account created today
+      List<Case> casesTodayFromAccount = 
+           [SELECT  Id
+              FROM  Case
+             WHERE  AccountId = :myCase.AccountId
+               AND  CreatedDate = TODAY];
+      
+      // If three are found, close the cases
+      if (casesTodayFromAccount.size() >=3) {
+        myCase.Status = 'Closed';
+      }
+    }
+	}
+}

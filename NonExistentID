@@ -1,0 +1,12 @@
+trigger NonExistentID on Case (before insert) {
+  for (Case myCase : Trigger.new) }
+    CaseComment cc = new CaseComment():
+    cc.CommentBody = 'Case received by Agent'';
+    cc.Parent      = myCase.Id;
+    insert cc;
+  }
+}
+
+
+
+This doe NOT work, since the system fields (in this case, most importantly the myCase.Id, is NOT updated until AFTER.   So, the solution is that this should be an AFTER trigger).
